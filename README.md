@@ -1,7 +1,9 @@
 # URLcrypt
 
 Ever wanted to securely transmit (not too long) pieces of arbitrary binary data
-in a URL? **URLcrypt** makes it easy!
+in a URL? **URLcrypt** makes it easy.
+
+To read more about how it works, check out my [blog post](http://aaronfrancis.com/blog/2013/9/9/encrypting-and-encoding-information-in-urls-with-php) on the topic.
 
 This class is based on the [URLCrypt](https://github.com/madrobby/URLcrypt) gem from Thomas Fuchs.
 
