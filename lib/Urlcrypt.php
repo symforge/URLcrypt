@@ -13,18 +13,20 @@
 
 namespace Urlcrypt;
 
-class Urlcrypt {
-    static $table = "1bcd2fgh3jklmn4pqrstAvwxyz567890";
-    static $key = "";
-    static $cipher = MCRYPT_RIJNDAEL_128;
-    static $mode = MCRYPT_MODE_CBC;
+class Urlcrypt
+{
+    public static $table = "1bcd2fgh3jklmn4pqrstAvwxyz567890";
+    public static $key = "";
+    protected static $cipher = MCRYPT_RIJNDAEL_128;
+    protected static $mode = MCRYPT_MODE_CBC;
 
-    public static function encode($str) {
+    public static function encode($str)
+    {
         $n = strlen($str) * 8 / 5;
         $arr = str_split($str, 1);
 
         $m = "";
-        foreach($arr as $c) {
+        foreach ($arr as $c) {
             $m .= str_pad(decbin(ord($c)), 8, "0", STR_PAD_LEFT);
         }
 
@@ -40,7 +42,8 @@ class Urlcrypt {
         return $newstr;
     }
 
-    public static function decode($str) {
+    public static function decode($str)
+    {
         $n = strlen($str) * 5 / 8;
         $arr = str_split($str, 1);
 
@@ -57,7 +60,8 @@ class Urlcrypt {
         return $oldstr;
     }
 
-    public static function encrypt($str) {
+    public static function encrypt($str)
+    {
         if (self::$key === "") {
             throw new \Exception('No key provided.');
         }
@@ -76,7 +80,8 @@ class Urlcrypt {
         return self::encode($ciphertext);
     }
 
-    public static function decrypt($str) {
+    public static function decrypt($str)
+    {
         if (self::$key === "") {
             throw new \Exception('No key provided.');
         }
