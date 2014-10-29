@@ -34,7 +34,7 @@ class Urlcrypt {
 
         $newstr = "";
         for ($i = 0; $i < $n; $i++) {
-            $newstr .= Urlcrypt::$table[bindec(substr($m, $i * 5, 5))];
+            $newstr .= self::$table[bindec(substr($m, $i * 5, 5))];
         }
 
         return $newstr;
@@ -46,7 +46,7 @@ class Urlcrypt {
 
         $m = "";
         foreach ($arr as $c) {
-            $m .= str_pad(decbin(array_search($c, Urlcrypt::$table)), 5, "0", STR_PAD_LEFT);
+            $m .= str_pad(decbin(array_search($c, self::$table)), 5, "0", STR_PAD_LEFT);
         }
 
         $oldstr = "";
@@ -57,40 +57,40 @@ class Urlcrypt {
         return $oldstr;
     }
 
-    public static function encrypt($str){
-        if (Urlcrypt::$key === "") {
+    public static function encrypt($str) {
+        if (self::$key === "") {
             throw new \Exception('No key provided.');
         }
 
-        $key = pack('H*', Urlcrypt::$key);
+        $key = pack('H*', self::$key);
 
-        $iv_size = mcrypt_get_iv_size(Urlcrypt::$cipher, Urlcrypt::$mode);
+        $iv_size = mcrypt_get_iv_size(self::$cipher, self::$mode);
 
         $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
         $str = utf8_encode($str);
 
-        $ciphertext = mcrypt_encrypt(Urlcrypt::$cipher, $key, $str, Urlcrypt::$mode, $iv);
+        $ciphertext = mcrypt_encrypt(self::$cipher, $key, $str, self::$mode, $iv);
 
         $ciphertext = $iv . $ciphertext;
 
-        return Urlcrypt::encode($ciphertext);
+        return self::encode($ciphertext);
     }
 
-    public static function decrypt($str){
-        if (Urlcrypt::$key === "") {
+    public static function decrypt($str) {
+        if (self::$key === "") {
             throw new \Exception('No key provided.');
         }
 
-        $key = pack('H*', Urlcrypt::$key);
+        $key = pack('H*', self::$key);
 
-        $str = Urlcrypt::decode($str);
+        $str = self::decode($str);
 
-        $iv_size = mcrypt_get_iv_size(Urlcrypt::$cipher, Urlcrypt::$mode);
+        $iv_size = mcrypt_get_iv_size(self::$cipher, self::$mode);
         $iv_dec = substr($str, 0, $iv_size);
 
         $str = substr($str, $iv_size);
 
-        $str = mcrypt_decrypt(Urlcrypt::$cipher, $key, $str, Urlcrypt::$mode, $iv_dec);
+        $str = mcrypt_decrypt(self::$cipher, $key, $str, self::$mode, $iv_dec);
 
         // http://jonathonhill.net/2013-04-05/write-tests-you-might-learn-somethin/
         return rtrim($str, "\0");
