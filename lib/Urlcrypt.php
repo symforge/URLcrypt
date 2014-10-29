@@ -59,7 +59,7 @@ class Urlcrypt {
 
     public static function encrypt($str){
         if (Urlcrypt::$key === "") {
-            throw new Exception('No key provided.');
+            throw new \Exception('No key provided.');
         }
 
         $key = pack('H*', Urlcrypt::$key);
@@ -78,7 +78,7 @@ class Urlcrypt {
 
     public static function decrypt($str){
         if (Urlcrypt::$key === "") {
-            throw new Exception('No key provided.');
+            throw new \Exception('No key provided.');
         }
 
         $key = pack('H*', Urlcrypt::$key);
