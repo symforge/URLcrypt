@@ -73,6 +73,11 @@ and doesn't use vowels to avoid bad words in the generated string.
 
 Base64 results in ugly URLs, since many characters need to be URL escaped.
 
+## Development
+
+Clone the repository and do a `composer install` in the root directory of the library to install the development dependencies.
+Run the tests with `phpunit` from the root directory.
+
 ## License
 
 This library is licensed under the MIT License - see the `COPYING` file for details.
