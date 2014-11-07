@@ -3,25 +3,22 @@
 Ever wanted to securely transmit (not too long) pieces of arbitrary binary data
 in a URL? **URLcrypt** makes it easy.
 
-To read more about how it works, check out my [blog post](http://aaronfrancis.com/blog/2013/9/9/encrypting-and-encoding-information-in-urls-with-php) on the topic.
+To read more about how it works, check out the [blog post](http://aaronfrancis.com/blog/2013/9/9/encrypting-and-encoding-information-in-urls-with-php) on the topic.
 
 This class is based on the [URLCrypt](https://github.com/madrobby/URLcrypt) gem from Thomas Fuchs.
 
-URLcrypt uses **256-bit AES symmetric encryption**
-to securely encrypt data, and encodes and decodes 
+URLcrypt uses **256-bit AES symmetric encryption** to securely encrypt data, and encodes and decodes
 **Base 32 strings that can be used directly in URLs**.
 
-This can be used to securely store user ids, download expiration dates and 
-other arbitrary data like that when you access a web application from a place 
+This can be used to securely store user ids, download expiration dates and
+other arbitrary data like that when you access a web application from a place
 that doesn't have other authentication or persistence mechanisms (like cookies):
- 
+
   * Loading a generated image from your web app in an email
   * Links that come with an expiration date (à la S3)
   * Mini-apps that don't persist data on the server
 
-Requires the mcrypt PHP extension.
-
-**Important**: As a general guideline, URL lengths shouldn't exceed about 2000 
+**Important**: As a general guideline, URL lengths shouldn't exceed about 2000
 characters in length, as URLs longer than that will not work in some browsers
 and with some (proxy) servers. This limits the amount of data you should store
 with URLcrypt.
@@ -30,9 +27,31 @@ with URLcrypt.
 
 Patches are welcome; please include tests!
 
-## Example
+## Requirements
+
+URLcrypt requires PHP >= 5.3.3 as well as the mcrypt PHP extension.
+
+## Installation
+
+You can install URLcrypt via Composer with `composer require aarondfrancis/urlcrypt`, but since the package is not
+on [Packagist](https://packagist.org) yet, you have to add the Git repository to your composer.json like this:
+
+```json
+{
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/aarondfrancis/URLcrypt"
+		}
+	]
+}
+```
+
+## Usage
 
 ```php
+use Urlcrypt\Urlcrypt;
+
 // encoding without encryption. (don't use for anything sensitive)
 $encoded = Urlcrypt::encode("aaron");		// --> "mfqx2664"
 $decoded = Urlcrypt::decode("mfqx2664");	// --> "aaron"
@@ -45,9 +64,15 @@ $decrypted = Urlcrypt::decrypt("q0dmt61xkjyylA5mp3gm23khd1kg6w7pzxvd3nzcgb047zx8
 		// --> "aaron"
 ```
 
+Note that your key has to be a lower-case hex string.
+
 ## Why not Base 64?
 
 URLcrypt uses a modified Base 32 algorithm that doesn't use padding characters,
 and doesn't use vowels to avoid bad words in the generated string.
 
 Base64 results in ugly URLs, since many characters need to be URL escaped.
+
+## License
+
+This library is licensed under the MIT License - see the `COPYING` file for details.
