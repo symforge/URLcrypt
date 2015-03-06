@@ -33,17 +33,13 @@ URLcrypt requires PHP >= 5.3.3 as well as the mcrypt PHP extension.
 
 ## Installation
 
-You can install URLcrypt via Composer with `composer require aarondfrancis/urlcrypt`, but since the package is not
-on [Packagist](https://packagist.org) yet, you have to add the Git repository to your composer.json like this:
+You can install URLcrypt via Composer with `composer require aarondfrancis/urlcrypt` or by adding the following to your `composer.json` file:
 
 ```json
 {
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/aarondfrancis/URLcrypt"
-		}
-	]
+	"require": {
+		"aarondfrancis/urlcrypt": "0.2.*"
+	}
 }
 ```
 
