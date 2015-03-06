@@ -1,75 +1,105 @@
 <?php
 
-class Urlcrypt {
-  static $table = "1bcd2fgh3jklmn4pqrstAvwxyz567890";
-  static $key = "";
-  static $cipher = MCRYPT_RIJNDAEL_128;
-  static $mode = MCRYPT_MODE_CBC;
+/**
+ * URLcrypt
+ *
+ * PHP library to securely encode and decode short pieces of arbitrary binary data in URLs.
+ *
+ * (c) Aaron Francis
+ *
+ * For the full copyright and license information, please view the COPYING
+ * file that was distributed with this source code.
+ */
 
-  public static function encode($str) {
+namespace Urlcrypt;
 
-    $n = strlen($str) * 8 / 5;
-    $arr = str_split($str, 1);
+class Urlcrypt
+{
+    public static $table = "1bcd2fgh3jklmn4pqrstAvwxyz567890";
+    public static $key = "";
+    protected static $cipher = MCRYPT_RIJNDAEL_128;
+    protected static $mode = MCRYPT_MODE_CBC;
 
-    $m = "";
-    foreach($arr as $c)$m .= str_pad(decbin(ord($c)), 8, "0", STR_PAD_LEFT);
+    public static function encode($str)
+    {
+        $n = strlen($str) * 8 / 5;
+        $arr = str_split($str, 1);
 
-    $p = ceil(strlen($m)/5)*5;
+        $m = "";
+        foreach ($arr as $c) {
+            $m .= str_pad(decbin(ord($c)), 8, "0", STR_PAD_LEFT);
+        }
 
-    $m = str_pad($m, $p, "0", STR_PAD_RIGHT);
+        $p = ceil(strlen($m) / 5) * 5;
 
-    $newstr = "";
-    for($i=0;$i<$n;$i++)$newstr .= Urlcrypt::$table[bindec(substr($m, $i*5, 5))]; 
+        $m = str_pad($m, $p, "0", STR_PAD_RIGHT);
 
-    return $newstr;
-  }
+        $newstr = "";
+        for ($i = 0; $i < $n; $i++) {
+            $newstr .= self::$table[bindec(substr($m, $i * 5, 5))];
+        }
 
-  public static function decode($str) {
-    $n = strlen($str) * 5 / 8;
-      $arr = str_split($str, 1);
+        return $newstr;
+    }
 
-      $m = "";
-      foreach($arr as $c)$m .= str_pad(decbin(array_search($c, Urlcrypt::$table)), 5, "0", STR_PAD_LEFT); 
+    public static function decode($str)
+    {
+        $n = strlen($str) * 5 / 8;
+        $arr = str_split($str, 1);
 
-      $oldstr = "";
-      for($i=0;$i<floor($n);$i++) $oldstr .= chr(bindec(substr($m, $i*8,8)));
+        $m = "";
+        foreach ($arr as $c) {
+            $m .= str_pad(decbin(array_search($c, self::$table)), 5, "0", STR_PAD_LEFT);
+        }
 
-      return $oldstr;
-  }
+        $oldstr = "";
+        for ($i = 0; $i < floor($n); $i++) {
+            $oldstr .= chr(bindec(substr($m, $i * 8, 8)));
+        }
 
-  public static function encrypt($str){
-    if(Urlcrypt::$key === "") throw new Exception('No key provided.');
-    $key = pack('H*', Urlcrypt::$key);
+        return $oldstr;
+    }
 
-    $iv_size = mcrypt_get_iv_size(Urlcrypt::$cipher, Urlcrypt::$mode);
+    public static function encrypt($str)
+    {
+        if (self::$key === "") {
+            throw new \Exception('No key provided.');
+        }
 
-    $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-    $str = utf8_encode($str);
+        $key = pack('H*', self::$key);
 
-    $ciphertext = mcrypt_encrypt(Urlcrypt::$cipher, $key, $str, Urlcrypt::$mode, $iv);
+        $iv_size = mcrypt_get_iv_size(self::$cipher, self::$mode);
 
-    $ciphertext = $iv . $ciphertext;
+        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        $str = utf8_encode($str);
 
-    return Urlcrypt::encode($ciphertext);   
-  }
+        $ciphertext = mcrypt_encrypt(self::$cipher, $key, $str, self::$mode, $iv);
 
-  public static function decrypt($str){
-    if(Urlcrypt::$key === "") throw new Exception('No key provided.');
-    $key = pack('H*', Urlcrypt::$key);
+        $ciphertext = $iv . $ciphertext;
 
+        return self::encode($ciphertext);
+    }
 
-    $str = Urlcrypt::decode($str);
+    public static function decrypt($str)
+    {
+        if (self::$key === "") {
+            throw new \Exception('No key provided.');
+        }
 
-    $iv_size = mcrypt_get_iv_size(Urlcrypt::$cipher, Urlcrypt::$mode);
-    $iv_dec = substr($str, 0, $iv_size);
+        $key = pack('H*', self::$key);
 
-    $str = substr($str, $iv_size);
+        $str = self::decode($str);
 
-    $str = mcrypt_decrypt(Urlcrypt::$cipher, $key, $str, Urlcrypt::$mode, $iv_dec);
+        $iv_size = mcrypt_get_iv_size(self::$cipher, self::$mode);
+        $iv_dec = substr($str, 0, $iv_size);
 
-    // http://jonathonhill.net/2013-04-05/write-tests-you-might-learn-somethin/
-    return rtrim($str, "\0");;
-  }
+        $str = substr($str, $iv_size);
+
+        $str = mcrypt_decrypt(self::$cipher, $key, $str, self::$mode, $iv_dec);
+
+        // http://jonathonhill.net/2013-04-05/write-tests-you-might-learn-somethin/
+        return rtrim($str, "\0");
+    }
 }
 
 Urlcrypt::$table = str_split(Urlcrypt::$table, 1);
