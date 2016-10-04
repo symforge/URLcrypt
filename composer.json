@@ -1,5 +1,5 @@
 {
-    "name": "aarondfrancis/urlcrypt",
+    "name": "symforge/urlcrypt",
     "description": "PHP library to securely encode and decode short pieces of arbitrary binary data in URLs.",
     "type": "library",
     "license": "MIT",
